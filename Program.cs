@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace environmator_cli
 {
@@ -6,7 +7,7 @@ namespace environmator_cli
     {
         static void Main(string[] args)
         {
-            //Ler config
+            //Ler default config?           
 
             if (args.Length <= 0) 
             {
@@ -15,11 +16,17 @@ namespace environmator_cli
                 return;
             }
 
-            var commands = args[0];           
+            var commands = args.Select(c => c.ToLower()).ToArray();
 
-            if(commands == "-h" || commands == "--help")
+            if(commands[0] == "-h" || commands[0] == "--help")
             {
                 ShowCommands();
+                return;
+            }
+
+            if(commands[0] == "config")
+            {
+                Console.WriteLine("'config' command under construction!");
                 return;
             }
 
