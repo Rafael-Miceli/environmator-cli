@@ -26,7 +26,15 @@ namespace environmator_cli
 
             if(commands[0] == "config")
             {
-                Console.WriteLine("'config' command under construction!");
+                Console.WriteLine("");
+                Console.WriteLine("'config' still command under construction!");
+                Console.WriteLine("Today we only support set your VSTS code repo environment");
+
+                if(commands.Length == 1) 
+                {
+                    ShowConfigSubCommandsAndOptions();
+                }
+
                 return;
             }
 
@@ -41,6 +49,13 @@ namespace environmator_cli
             Console.WriteLine("Commands:");
             Console.WriteLine("   new       Create a new project in all environments defined in default configuration or by the parameters.");
             Console.WriteLine("   config    Show the configuration to access you repositories, platforms, and C.I. builders.");
+        }
+
+        private static void ShowConfigSubCommandsAndOptions()
+        {
+            Console.WriteLine("");
+            Console.WriteLine("SubCommands:");
+            Console.WriteLine("   vsts      Set the options to use your VSTS environment.");
         }
     }
 }
