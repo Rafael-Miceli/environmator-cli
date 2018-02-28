@@ -33,6 +33,13 @@ namespace environmator_cli
                 if(commands.Length == 1) 
                 {
                     ShowConfigSubCommandsAndOptions();
+                    return;
+                }
+
+                if(commands[1] == "vsts")
+                {
+                    ShowVstsOptions();
+                    return;
                 }
 
                 return;
@@ -41,6 +48,13 @@ namespace environmator_cli
             
             Console.WriteLine("Command not found try one of these: ");
             ShowCommands();
+        }
+
+        private static void ShowVstsOptions()
+        {
+            Console.WriteLine("");
+            Console.WriteLine("Options:");
+            Console.WriteLine("   -i --instance      your vsts instance.");
         }
 
         private static void ShowCommands()
