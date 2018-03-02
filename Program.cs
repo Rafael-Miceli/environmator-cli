@@ -38,8 +38,13 @@ namespace environmator_cli
 
                 if(commands[1] == "vsts")
                 {
-                    ShowVstsOptions();
-                    return;
+                    if(commands.Length == 2)
+                    {
+                        ShowVstsOptions();
+                        return;
+                    }
+                    
+                                            
                 }
 
                 return;
