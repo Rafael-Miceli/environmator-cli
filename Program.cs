@@ -1,31 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using CommandLine;
-using Microsoft.Extensions.Configuration;
+using environmator_cli.Configuration;
 
 
 namespace environmator_cli
 {
     class Program
     {
-        public static IConfigurationRoot Configuration;
+        private static ConfigRepository _configRepository;
 
         static int Main(string[] args)
         {
-            string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-
-            if (String.IsNullOrWhiteSpace(environment))
-                throw new ArgumentNullException("Environment not found in ASPNETCORE_ENVIRONMENT");
-
-            var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-
-            var builder = new ConfigurationBuilder()
-            .SetBasePath(Path.Combine(AppContext.BaseDirectory))
-            .AddJsonFile("config.json", optional: true);
-
-            Configuration = builder.Build();
+            _configRepository = new ConfigRepository();
 
             return Parser.Default.ParseVerbs<ConfigVerb, NewVerb>(args)
                  .MapResult(
@@ -49,17 +36,16 @@ namespace environmator_cli
 
         private static int RunConfigVstsAndReturnExitCode(ConfigVerb.ConfigVstsVerb opts)
         {
-            Console.WriteLine("config vsts foi chamado");        
+            Console.WriteLine("config vsts foi chamado");
 
-            
+            var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+
             var envyxConfigFile = Path.Combine(appData, "envyx", "config.json");
 
             Console.WriteLine("write config vsts in file " + appData);
-
-            //Caso nao exista pasta envyx e arquivo config criar
             
-            //Escrever area de VSTS no arquivo
-
+            _configRepository.SetVstsConfig(opts);
+            
             return 0;
         }        
 
