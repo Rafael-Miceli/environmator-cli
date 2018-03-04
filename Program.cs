@@ -10,8 +10,8 @@ namespace environmator_cli
         {
             return CommandLine.Parser.Default.ParseArguments<ConfigVerb>(args)
             .MapResult(
-            (ConfigVerb opts) => RunAddAndReturnExitCode(opts),
-            errs => 1);
+                (ConfigVerb opts) => RunConfigAndReturnExitCode(opts),
+                errs => 1);
             //Ler default config?           
 
         //     if (args.Length <= 0) 
@@ -55,9 +55,10 @@ namespace environmator_cli
         //         return;
         }
 
-        private static int RunAddAndReturnExitCode(ConfigVerb opts)
+        private static int RunConfigAndReturnExitCode(ConfigVerb opts)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("config foi chamado");
+            return 0;
         }
 
 
