@@ -15,7 +15,7 @@ namespace environmator_cli
         [Verb("vsts", HelpText = "Set the options to use your VSTS environment.")]
         public class ConfigVstsVerb
         {
-            [Option('i', "instance", HelpText = "Your vsts instance.")]
+            [Option('i', "instance", HelpText = "Your vsts instance.", Required = true)]
             public string Instance { get; set; }
         }
     }

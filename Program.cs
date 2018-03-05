@@ -29,9 +29,10 @@ namespace environmator_cli
             return 0;
         }
 
-        private static int RunConfigVstsAndReturnExitCode(object opts)
+        private static int RunConfigVstsAndReturnExitCode(ConfigVerb.ConfigVstsVerb opts)
         {
             Console.WriteLine("config vsts foi chamado");
+            Console.WriteLine("Instance: " + opts.Instance);
             return 0;
         }        
 
