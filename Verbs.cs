@@ -17,6 +17,8 @@ namespace environmator_cli
         {
             [Option('i', "instance", HelpText = "Your vsts instance.", Required = true)]
             public string Instance { get; set; }
+            [Option('p', "project", HelpText = "Your vsts project.", Required = true)]
+            public string Project { get; set; }
         }
     }
 
