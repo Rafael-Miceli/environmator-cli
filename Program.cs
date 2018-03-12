@@ -36,13 +36,7 @@ namespace environmator_cli
 
         private static int RunConfigVstsAndReturnExitCode(ConfigVerb.ConfigVstsVerb opts)
         {
-            Console.WriteLine("config vsts foi chamado");
-
-            var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-
-            var envyxConfigFile = Path.Combine(appData, "envyx", "config.json");
-
-            Console.WriteLine("write config vsts in file " + appData);
+            Console.WriteLine("config vsts foi chamado");           
             
             _configRepository.SetVstsConfig(opts);
             
