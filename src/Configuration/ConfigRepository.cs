@@ -24,23 +24,38 @@ namespace environmator_cli.Configuration
             Console.WriteLine($"Setando valor do vsts {opts.Instance} - {opts.Project}");
 
             Console.WriteLine("write config vsts in file " + envyxConfigFile);
-            
-            if (!File.Exists(envyxConfigFile))
-            {
-                string vstsSection = $@"[vsts-default]
+
+            string vstsSection = $@"[vsts-default]
 instance={opts.Instance}
 project={opts.Project}";
+            
+            if (!File.Exists(envyxConfigFile))
+            {                
                 File.AppendAllText(envyxConfigFile, vstsSection);
             }
             else
             {
-                var lines = File.ReadLines(envyxConfigFile)
-                .SkipWhile(line => !line.Contains("[vsts-default]"))
-                .Skip(1)                
-                .TakeWhile(line => !line.Contains("["));
+                var lines = File.ReadAllLines(envyxConfigFile);
                 
-                var vstsConfigInOneLine = string.Join(string.Empty, lines);                
+                // .SkipWhile(line => !line.Contains("[vsts-default]"))
+                // .Skip(1)                
+                // .TakeWhile(line => !line.Contains("["));
+
+                ClearFileContent(envyxConfigFile);
+
+                File.AppendAllText(envyxConfigFile, vstsSection);
+
+                // using(TextWriter tw = new StreamWriter(envyxConfigFile))
+                // {
+                //     foreach (String s in vstsSection)
+                //         tw.WriteLine(s);
+                // }
             }
+        }
+
+        public void ClearFileContent(string envyxConfigFile)
+        {
+            File.WriteAllText(envyxConfigFile, string.Empty);
         }
     }
 }
