@@ -25,37 +25,35 @@ namespace environmator_cli.Configuration
 
             Console.WriteLine("write config vsts in file " + envyxConfigFile);
 
-            string vstsSection = $@"[vsts-default]
-instance={opts.Instance}
-project={opts.Project}";
+            var newVstsSection = new string[] {"[vsts-default]", $"instance={opts.Instance}", $"project={opts.Project}"};
             
             if (!File.Exists(envyxConfigFile))
             {                
-                File.AppendAllText(envyxConfigFile, vstsSection);
+                File.AppendAllLines(envyxConfigFile, newVstsSection);
             }
             else
             {
                 var lines = File.ReadAllLines(envyxConfigFile);
-                
-                // .SkipWhile(line => !line.Contains("[vsts-default]"))
-                // .Skip(1)                
-                // .TakeWhile(line => !line.Contains("["));
 
+                var existentVstsSection = GetVstsConfigSections(lines);                
+                
                 ClearFileContent(envyxConfigFile);
 
-                File.AppendAllText(envyxConfigFile, vstsSection);
-
-                // using(TextWriter tw = new StreamWriter(envyxConfigFile))
-                // {
-                //     foreach (String s in vstsSection)
-                //         tw.WriteLine(s);
-                // }
+                File.AppendAllLines(envyxConfigFile, lines);                
             }
+        }
+
+        private string[] GetVstsConfigSections(string[] lines)
+        {
+            var vstsConfigSectionTag = "[vsts-default]";
+            return lines.SkipWhile(l => !l.Contains(vstsConfigSectionTag))
+            .Skip(1)
+            .TakeWhile(line => !line.Contains("[")).ToArray();
         }
 
         public void ClearFileContent(string envyxConfigFile)
         {
             File.WriteAllText(envyxConfigFile, string.Empty);
         }
-    }
+    }    
 }
