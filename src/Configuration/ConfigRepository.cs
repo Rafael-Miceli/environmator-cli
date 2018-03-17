@@ -33,10 +33,28 @@ namespace environmator_cli.Configuration
             }
             else
             {
-                var lines = File.ReadAllLines(envyxConfigFile);
+                var lines = File.ReadAllLines(envyxConfigFile).ToList();
 
-                var existentVstsSection = GetVstsConfigSections(lines);                
-                
+                var indexToBeginSubstitute = lines.IndexOf("[vsts-default]") + 1;
+                var indexEndToSubstitute = (lines.Skip(indexToBeginSubstitute).TakeWhile(line => !line.Contains("[")).Count() + indexToBeginSubstitute);
+
+                for (int i = 0; i <= (newVstsSection.Length - 2); i++)
+                {
+                    if (indexToBeginSubstitute < indexEndToSubstitute)
+                    {
+                        lines[indexToBeginSubstitute] = newVstsSection[i + 1];
+                        indexToBeginSubstitute++;
+                        continue;
+                    }
+
+                    lines.Insert(indexToBeginSubstitute, newVstsSection[i + 1]);
+                    indexToBeginSubstitute++;
+                }
+
+                //var existentVstsSection = GetVstsConfigSections(lines);
+
+                //existentVstsSection = newVstsSection.Skip(1).ToArray();
+
                 ClearFileContent(envyxConfigFile);
 
                 File.AppendAllLines(envyxConfigFile, lines);                
