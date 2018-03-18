@@ -13,7 +13,7 @@ namespace environmator.tests
             var configVstsVerb = new ConfigVerb.ConfigVstsVerb()
             {
                 Instance = "rafael-miceli",
-                Project = "PriceStore"
+                Project = "Envyx"
             };
 
             var sut = new ConfigRepository();            

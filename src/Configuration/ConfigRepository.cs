@@ -25,9 +25,9 @@ namespace environmator_cli.Configuration
 
             Console.WriteLine("write config vsts in file " + envyxConfigFile);
 
-            var newVstsSection = new string[] {"[vsts-default]", $"instance={opts.Instance}", $"project={opts.Project}"};
+            var newVstsSection = new string[] {"[vsts]", $"instance={opts.Instance}", $"project={opts.Project}"};
             
-            if (!File.Exists(envyxConfigFile))
+            if (!File.Exists(envyxConfigFile) || VstsConfigDoesNotExist(envyxConfigFile))
             {                
                 File.AppendAllLines(envyxConfigFile, newVstsSection);
             }
@@ -35,25 +35,21 @@ namespace environmator_cli.Configuration
             {
                 var lines = File.ReadAllLines(envyxConfigFile).ToList();
 
-                var indexToBeginSubstitute = lines.IndexOf("[vsts-default]") + 1;
+                var indexToBeginSubstitute = lines.IndexOf("[vsts]") + 1;
                 var indexEndToSubstitute = (lines.Skip(indexToBeginSubstitute).TakeWhile(line => !line.Contains("[")).Count() + indexToBeginSubstitute);
 
-                for (int i = 0; i <= (newVstsSection.Length - 2); i++)
+                for (int i = 1; i <= (newVstsSection.Length - 1); i++)
                 {
                     if (indexToBeginSubstitute < indexEndToSubstitute)
                     {
-                        lines[indexToBeginSubstitute] = newVstsSection[i + 1];
+                        lines[indexToBeginSubstitute] = newVstsSection[i];
                         indexToBeginSubstitute++;
                         continue;
                     }
 
-                    lines.Insert(indexToBeginSubstitute, newVstsSection[i + 1]);
+                    lines.Insert(indexToBeginSubstitute, newVstsSection[i]);
                     indexToBeginSubstitute++;
                 }
-
-                //var existentVstsSection = GetVstsConfigSections(lines);
-
-                //existentVstsSection = newVstsSection.Skip(1).ToArray();
 
                 ClearFileContent(envyxConfigFile);
 
@@ -61,12 +57,10 @@ namespace environmator_cli.Configuration
             }
         }
 
-        private string[] GetVstsConfigSections(string[] lines)
+        private bool VstsConfigDoesNotExist(string envyxConfigFile)
         {
-            var vstsConfigSectionTag = "[vsts-default]";
-            return lines.SkipWhile(l => !l.Contains(vstsConfigSectionTag))
-            .Skip(1)
-            .TakeWhile(line => !line.Contains("[")).ToArray();
+            var lines = File.ReadAllLines(envyxConfigFile).ToList();
+            return lines.IndexOf("[vsts]") == -1;
         }
 
         public void ClearFileContent(string envyxConfigFile)
