@@ -23,11 +23,19 @@ namespace environmator_cli
     }
 
     [Verb("new", HelpText = "Create a new project in all environments defined in default configuration or by the parameters.")]
+    [ChildVerbs(typeof(ProjectVerb))]
     public class NewVerb
     {
         public NewVerb()
         {
             Console.WriteLine("new Verb called");
+        }
+
+        [Verb("project", HelpText = "Create a new project in all environments defined in default configuration or by the parameters.")]
+        public class ProjectVerb
+        {
+            [Option('n', "name", HelpText = "Your vsts instance.", Required = true)]
+            public string Name { get; set; }
         }
     }
 

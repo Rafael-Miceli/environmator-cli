@@ -18,6 +18,7 @@ namespace environmator_cli
                  .MapResult(
                  (ConfigVerb opts) => RunConfigAndReturnExitCode(opts),
                  (NewVerb opts) => RunNewAndReturnExitCode(opts),
+                 (NewVerb.ProjectVerb opts) => RunNewProjectAndReturnExitCode(opts),
                  (ConfigVerb.ConfigVstsVerb opts) => RunConfigVstsAndReturnExitCode(opts),
                  errs => 1);            
         }
@@ -31,6 +32,15 @@ namespace environmator_cli
         private static int RunNewAndReturnExitCode(object opts)
         {
             Console.WriteLine("new foi chamado");
+            return 0;
+        }
+
+        private static int RunNewProjectAndReturnExitCode(NewVerb.ProjectVerb opts)
+        {
+            Console.WriteLine("Criando projeto com nome " + opts.Name);
+
+            //string[] vstsConfig = _configRepository.ReadVstsConfig(opts);
+
             return 0;
         }
 

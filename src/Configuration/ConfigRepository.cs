@@ -55,6 +55,10 @@ namespace environmator_cli.Configuration
 
                 File.AppendAllLines(envyxConfigFile, lines);                
             }
+
+            // .SkipWhile(line => !line.Contains("[vsts-default]"))
+            // .Skip(1)                
+            // .TakeWhile(line => !line.Contains("["));
         }
 
         private bool VstsConfigDoesNotExist(string envyxConfigFile)
