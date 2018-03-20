@@ -19,5 +19,20 @@ namespace environmator.tests
             var sut = new ConfigRepository();            
             sut.SetVstsConfig(configVstsVerb);
         }
+
+        [Fact]
+        public void Should_Read_Config_When_Exists()
+        {
+            var configVstsVerb = new ConfigVerb.ConfigVstsVerb()
+            {
+                Instance = "rafael-miceli",
+                Project = "Envyx"
+            };
+
+            var sut = new ConfigRepository();            
+            var result = sut.ReadVstsConfig();
+
+            Assert.NotNull(result);
+        }
     }
 }

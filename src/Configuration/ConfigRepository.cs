@@ -56,9 +56,34 @@ namespace environmator_cli.Configuration
                 File.AppendAllLines(envyxConfigFile, lines);                
             }
 
-            // .SkipWhile(line => !line.Contains("[vsts-default]"))
-            // .Skip(1)                
-            // .TakeWhile(line => !line.Contains("["));
+            
+        }
+
+        public ConfigVerb.ConfigVstsVerb ReadVstsConfig()
+        {
+            var vstsConfigAsString = File.ReadAllLines(envyxConfigFile);
+
+            var vstsConfigAsStringArray = vstsConfigAsString
+             .SkipWhile(line => !line.Contains("[vsts]"))
+             .Skip(1)                
+             .TakeWhile(line => !line.Contains("["));
+
+            var vstsConfigSplited = vstsConfigAsStringArray.Select(c => c.Split('='));
+
+            var vstsConfig = new ConfigVerb.ConfigVstsVerb();
+
+            foreach (var config in vstsConfigSplited)
+            {
+                if (config[0] == "instance")
+                {
+                    vstsConfig.Instance = config[1];
+                    continue;
+                }
+
+                vstsConfig.Project = config[1];                
+            }
+
+            return vstsConfig;
         }
 
         private bool VstsConfigDoesNotExist(string envyxConfigFile)
