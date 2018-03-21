@@ -54,7 +54,7 @@ namespace environmator_cli
         private static IEnumerable<string> GetVstsRepos(NewVerb.ProjectVerb opts, ConfigVerb.ConfigVstsVerb vstsConfig)
         {
             HttpClient client = new HttpClient();
-            var result = client.GetAsync($"https://{vstsConfig.Instance}/DefaultCollection/{vstsConfig.Project}/_apis/git/repositories?api-version=1.0").Result;
+            var result = client.GetAsync($"https://{vstsConfig.Instance}.visualstudio.com/DefaultCollection/{vstsConfig.Project}/_apis/git/repositories?api-version=1.0").Result;
 
             Console.WriteLine(result.StatusCode);
             Console.WriteLine(result.Content.ReadAsStringAsync().Result);
