@@ -64,8 +64,9 @@ namespace environmator_cli.Configuration
             var vstsConfigAsString = File.ReadAllLines(envyxConfigFile);
 
             var vstsConfigAsStringArray = vstsConfigAsString
+             .Where(l => !string.IsNullOrEmpty(l))
              .SkipWhile(line => !line.Contains("[vsts]"))
-             .Skip(1)                
+             .Skip(1)
              .TakeWhile(line => !line.Contains("["));
 
             var vstsConfigSplited = vstsConfigAsStringArray.Select(c => c.Split('='));
