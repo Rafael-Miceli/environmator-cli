@@ -21,11 +21,7 @@ namespace environmator_cli.Configuration
         }
         public void SetVstsConfig(ConfigVerb.ConfigVstsVerb opts)
         {
-            Console.WriteLine($"Setando valor do vsts {opts.Instance} - {opts.Project}");
-
-            Console.WriteLine("write config vsts in file " + envyxConfigFile);
-
-            var newVstsSection = new string[] {"[vsts]", $"instance={opts.Instance}", $"project={opts.Project}"};
+            var newVstsSection = new string[] {"[vsts]", $"instance={opts.Instance}", $"project={opts.Project}", $"token={opts.Token}"};
             
             if (!File.Exists(envyxConfigFile) || VstsConfigDoesNotExist(envyxConfigFile))
             {                
