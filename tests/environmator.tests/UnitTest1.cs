@@ -26,7 +26,8 @@ namespace environmator.tests
             var configVstsVerb = new ConfigVerb.ConfigVstsVerb()
             {
                 Instance = "rafael-miceli",
-                Project = "Envyx"
+                Project = "Envyx",
+                Token = "teste"
             };
 
             var sut = new ConfigRepository();            

@@ -55,9 +55,8 @@ namespace environmator_cli
         }
 
         private static IEnumerable<string> GetVstsRepos(NewVerb.ProjectVerb opts, ConfigVerb.ConfigVstsVerb vstsConfig)
-        {
-            // Interactively ask the user for credentials, caching them so the user isn't constantly prompted
-            VssCredentials creds = new VssBasicCredential(string.Empty, "token");
+        {            
+            VssCredentials creds = new VssBasicCredential(string.Empty, vstsConfig.Token);
             //creds.Storage = new VssClientCredentialStorage();
 
             var vstsCollectionUrl = $"https://{vstsConfig.Instance}.visualstudio.com";
@@ -66,10 +65,7 @@ namespace environmator_cli
 
             GitHttpClient gitClient = connection.GetClient<GitHttpClient>();
 
-            var repo = gitClient.GetRepositoriesAsync().Result;
-
-            //HttpClient client = new HttpClient();
-            //var result = client.GetAsync($"{vstsCollectionUrl}/DefaultCollection/{vstsConfig.Project}/_apis/git/repositories?api-version=1.0").Result;
+            var repo = gitClient.GetRepositoriesAsync().Result;            
 
             Console.WriteLine(repo.Count);
             Console.WriteLine(repo.FirstOrDefault()?.Name);

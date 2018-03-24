@@ -77,7 +77,13 @@ namespace environmator_cli.Configuration
                     continue;
                 }
 
-                vstsConfig.Project = config[1];                
+                if (config[0] == "project")
+                {
+                    vstsConfig.Project = config[1];
+                    continue;
+                }
+
+                vstsConfig.Token = config[1];                
             }
 
             return vstsConfig;
