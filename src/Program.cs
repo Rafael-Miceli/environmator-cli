@@ -12,13 +12,17 @@ using Microsoft.VisualStudio.Services.WebApi;
 
 namespace environmator_cli
 {
-    class Program
+    public class Program
     {
         private static ConfigRepository _configRepository;
+        public static ConfigVerb.ConfigVstsVerb _vstsConfig;
+        private static GitHttpClient _vstsGitClient;
 
         static int Main(string[] args)
         {
             _configRepository = new ConfigRepository();
+
+            _vstsConfig = _configRepository.ReadVstsConfig();
 
             return Parser.Default.ParseVerbs<ConfigVerb, NewVerb>(args)
                  .MapResult(
@@ -31,51 +35,68 @@ namespace environmator_cli
 
         private static int RunConfigAndReturnExitCode(object opts)
         {
-            Console.WriteLine("config foi chamado");
             return 0;
         }
 
         private static int RunNewAndReturnExitCode(object opts)
         {
-            Console.WriteLine("new foi chamado");
             return 0;
         }
 
         private static int RunNewProjectAndReturnExitCode(NewVerb.ProjectVerb opts)
         {
-            Console.WriteLine("Criando projeto com nome " + opts.Name);
+            Console.WriteLine($"Creating {opts.Name} repository in vsts.");
 
-            var vstsConfig = _configRepository.ReadVstsConfig();            
+            var vstsConfig = _configRepository.ReadVstsConfig();
 
-            var repos = GetVstsRepos(opts, vstsConfig);
+            if (RepositoryExists(opts.Name))
+                return 1;
+            try
+            {
+                _vstsGitClient.CreateRepositoryAsync(new GitRepository() { Name = opts.Name }, _vstsConfig.Project).Wait();
+            }
+            catch (Exception)
+            {
+                //Validate permission exception
+                Console.WriteLine($"Sorry, but we had a problem trying to create {opts.Name} repository");
+                return 1;
+            }
+            
 
-            //string[] vstsConfig = _configRepository.ReadVstsConfig(opts);
-
+            Console.WriteLine($"{opts.Name} repository created! Ready to work! =D");
             return 0;
         }
 
-        private static IEnumerable<string> GetVstsRepos(NewVerb.ProjectVerb opts, ConfigVerb.ConfigVstsVerb vstsConfig)
+        public static bool RepositoryExists(string repositoryName)
         {            
-            VssCredentials creds = new VssBasicCredential(string.Empty, vstsConfig.Token);
+            VssCredentials creds = new VssBasicCredential(string.Empty, _vstsConfig.Token);
             //creds.Storage = new VssClientCredentialStorage();
 
-            var vstsCollectionUrl = $"https://{vstsConfig.Instance}.visualstudio.com";
+            var vstsCollectionUrl = $"https://{_vstsConfig.Instance}.visualstudio.com";
 
             VssConnection connection = new VssConnection(new Uri(vstsCollectionUrl), creds);
 
-            GitHttpClient gitClient = connection.GetClient<GitHttpClient>();
+            _vstsGitClient = connection.GetClient<GitHttpClient>();
 
-            var repo = gitClient.GetRepositoriesAsync().Result;            
+            GitRepository repo;
 
-            Console.WriteLine(repo.Count);
-            Console.WriteLine(repo.FirstOrDefault()?.Name);
-            return null;
+            try
+            {
+                repo = _vstsGitClient.GetRepositoryAsync(_vstsConfig.Project, repositoryName).Result;
+            }
+            catch (Exception ex)
+            {
+                //Validate permission exception
+                return false;
+            }            
+
+            Console.WriteLine($"Repository {repositoryName} already exists.");
+
+            return repo != null;
         }
 
         private static int RunConfigVstsAndReturnExitCode(ConfigVerb.ConfigVstsVerb opts)
-        {
-            Console.WriteLine("config vsts foi chamado");           
-            
+        {   
             _configRepository.SetVstsConfig(opts);
             
             return 0;
