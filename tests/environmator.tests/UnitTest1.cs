@@ -35,21 +35,5 @@ namespace environmator.tests
 
             Assert.NotNull(result);
         }
-
-        [Fact]
-        public void When_RepositoryName_Already_Exists_Then_Return_True()
-        {
-            var configVstsVerb = new ConfigVerb.ConfigVstsVerb()
-            {
-                Instance = "rafa-miceli",
-                Project = "Teste",
-                Token = "llhqarunnxc7gsb6yik34j3zcddlmgei5kzmebvexs6bcsick2ca"
-            };
-
-            Program._vstsConfig = configVstsVerb;
-            var result = Program.RepositoryExists("Teste");
-
-            Assert.False(result);
-        }
     }
 }

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace environmator_cli.Configuration
 {
-    public class ConfigRepository
+    public class ConfigRepository : IConfigRepository
     {
         private string appDataPath => Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         private string envyxDir = string.Empty;
