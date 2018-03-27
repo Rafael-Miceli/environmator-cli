@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
 using CommandLine;
 using environmator_cli.Configuration;
 using environmator_cli.Services;
-using Microsoft.TeamFoundation.SourceControl.WebApi;
-using Microsoft.VisualStudio.Services.Client;
-using Microsoft.VisualStudio.Services.Common;
-using Microsoft.VisualStudio.Services.WebApi;
 
 
 namespace environmator_cli
@@ -44,20 +37,35 @@ namespace environmator_cli
 
         private static int RunNewProjectAndReturnExitCode(NewVerb.ProjectVerb opts)
         {
-            Console.WriteLine($"Creating {opts.Name} repository in vsts.");            
-            
+            var result = CreateVstsRepo(opts.Name);
+
+            result = CreateJenkinsJob(opts.Name);            
+
+            return result;
+        }
+
+        private static int CreateJenkinsJob(string name)
+        {
+            return 0;
+        }
+
+        private static int CreateVstsRepo(string repositoryName)
+        {
+            Console.WriteLine($"Creating {repositoryName} repository in vsts.");
+
             try
             {
-                _vstsService.CreateRepository(opts.Name).Wait();
+                _vstsService.CreateRepository(repositoryName).Wait();
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Sorry, but we had a problem trying to create {opts.Name} repository");
+                Console.WriteLine($"Sorry, but we had a problem trying to create {repositoryName} repository");
                 Console.WriteLine(ex.Message);
                 return 1;
-            }            
+            }
 
-            Console.WriteLine($"{opts.Name} repository created! Ready to work! =D");
+            Console.WriteLine($"{repositoryName} repository created!");
+
             return 0;
         }
         
