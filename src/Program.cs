@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using CommandLine;
 using environmator_cli.Configuration;
 using environmator_cli.Services;
@@ -10,6 +11,7 @@ namespace environmator_cli
     {
         private static IConfigRepository _configRepository;
         private static IVstsService _vstsService;
+        private static IEnumerable<IEnvironmentPluginService> _plugins;
 
         static int Main(string[] args)
         {
@@ -39,10 +41,31 @@ namespace environmator_cli
         {
             var result = CreateVstsRepo(opts.Name);
 
-            result = CreateJenkinsJob(opts.Name);            
+            result = CreateJenkinsJob(opts.Name);
 
-            return result;
+            return 0;
         }
+
+
+        private static int RunCreateEnvironments(NewVerb.ProjectVerb opts)
+        {
+            //Dreaming:
+            foreach (var creatorPlugin in _plugins)
+            {
+                try
+                {
+                    creatorPlugin.CreateEnvironment(opts.Name);
+                }
+                catch (Exception ex)
+                {
+                    //Log error
+                }
+                
+            }
+
+            return 0;
+        }
+
 
         private static int CreateJenkinsJob(string name)
         {
@@ -70,11 +93,28 @@ namespace environmator_cli
         }
         
         private static int RunConfigVstsAndReturnExitCode(ConfigVerb.ConfigVstsVerb opts)
-        {   
+        {
             _configRepository.SetVstsConfig(opts);
             
             return 0;
-        }        
+        }
 
+        private static int RunSetEnvironmentsConfig<T>(T opts)
+        {
+            //Dreaming:
+            foreach (var configPlugin in _plugins)
+            {
+                try
+                {
+                    configPlugin.SetEnvironmentConfig(opts);
+                }
+                catch (Exception ex)
+                {
+                    //Log error
+                }                
+            }
+
+            return 0;
+        }
     }
 }
