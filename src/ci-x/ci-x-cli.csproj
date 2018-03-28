@@ -15,4 +15,8 @@
     <PackageReference Include="Microsoft.VisualStudio.Services.InteractiveClient" Version="15.131.0-preview" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ci-x-core\ci-x-core.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,0 +1,6 @@
+[jenkins]
+host=test
+[vsts]
+instance=rafa-miceli
+project=Teste
+token=my-vsts-token

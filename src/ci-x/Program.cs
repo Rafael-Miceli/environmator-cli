@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CommandLine;
 using environmator_cli.Configuration;
 using environmator_cli.Services;
+using ci_x_core;
 
 
 namespace environmator_cli
@@ -11,7 +12,7 @@ namespace environmator_cli
     {
         private static IConfigRepository _configRepository;
         private static IVstsService _vstsService;
-        private static IEnumerable<IEnvironmentPluginService> _plugins;
+        private static IEnumerable<EnvironmentPluginService> _plugins;
 
         static int Main(string[] args)
         {

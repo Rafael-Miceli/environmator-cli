@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\environmator-cli.csproj" />
+    <ProjectReference Include="..\..\src\ci-x\ci-x-cli.csproj" />
   </ItemGroup>
 
 </Project>
