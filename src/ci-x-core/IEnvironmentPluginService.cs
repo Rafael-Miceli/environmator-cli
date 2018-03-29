@@ -7,7 +7,7 @@ namespace ci_x_core
 {
     public abstract class EnvironmentPluginService
     {
-        public abstract Task CreateEnvironment(string name, string description = null);
+        public abstract Task CreateEnvironment(string projectName, string description = null);
         public abstract Task SetEnvironmentConfig<T>(T opts);
         public abstract Task<T> ReadEnvironmentConfig<T>();
     }

@@ -4,4 +4,12 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\ci-x-core\ci-x-core.csproj" />
+    <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="15.131.0-preview" />
+    <PackageReference Include="Microsoft.VisualStudio.Services.Client" Version="15.131.0-preview" />
+    <PackageReference Include="Microsoft.VisualStudio.Services.InteractiveClient" Version="15.131.0-preview" />
+    <PackageReference Include="CommandLineParser" Version="2.2.1" />
+  </ItemGroup>
+
 </Project>
