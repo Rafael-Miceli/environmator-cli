@@ -3,6 +3,7 @@ using Microsoft.TeamFoundation.SourceControl.WebApi;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.WebApi;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace vsts_plugin
