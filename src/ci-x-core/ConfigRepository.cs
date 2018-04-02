@@ -60,7 +60,7 @@ namespace ci_x_core
 
         }
 
-        protected abstract string[] DefinePluginSection();
+        protected abstract string[] DefinePluginSection(T opts);
 
         public T ReadVstsConfig()
         {

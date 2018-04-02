@@ -8,18 +8,16 @@ namespace vsts_plugin
     public class VstsConfig : ConfigRepository<ConfigVstsVerb>
     {
         public VstsConfig(): base("vsts")
-        {
-
-        }
+        {}
 
         public override ConfigVstsVerb ReadDefinedConfigSections(IEnumerable<string[]> pluginConfigSplited)
         {
             throw new NotImplementedException();
         }
 
-        protected override string[] DefinePluginSection()
+        protected override string[] DefinePluginSection(ConfigVstsVerb opts)
         {
-            throw new NotImplementedException();
+            return new string[] { "[vsts]", $"instance={opts.Instance}", $"project={opts.Project}", $"token={opts.Token}" };
         }
     }
 }
