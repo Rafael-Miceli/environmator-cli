@@ -12,7 +12,7 @@ namespace environmator_cli
     {
         private static IConfigRepository _configRepository;
         private static IVstsService _vstsService;
-        private static IEnumerable<EnvironmentPluginService> _plugins;
+        private static IEnumerable<EnvironmentPluginService<ConfigVerb>> _plugins;
 
         static int Main(string[] args)
         {
@@ -100,14 +100,14 @@ namespace environmator_cli
             return 0;
         }
 
-        private static int RunSetEnvironmentsConfig<T>(T opts)
+        private static int RunSetEnvironmentsConfig(ConfigVerb opts)
         {
             //Dreaming:
             foreach (var configPlugin in _plugins)
             {
                 try
                 {
-                    configPlugin.SetEnvironmentConfig(opts);
+                    configPlugin.SetPluginConfig(opts);
                 }
                 catch (Exception ex)
                 {

@@ -3,43 +3,45 @@ using Microsoft.TeamFoundation.SourceControl.WebApi;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.WebApi;
 using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace vsts_plugin
 {
-    public class VstsService : EnvironmentPluginService
+    public class VstsService : EnvironmentPluginService<ConfigVstsVerb>
     {
         private ConfigVstsVerb _vstsConfig;
         private VssConnection _connection;
         private GitHttpClient _vstsGitClient;
 
-        public VstsService()
+        public VstsService(): base("vsts")
         {
-            _vstsConfig = ReadEnvironmentConfig<ConfigVstsVerb>().Result;
+            _vstsConfig = ReadPluginConfig().Result;
             ConnectToVsts();
         }
 
         public override async Task CreateEnvironment(string projectName, string description = null)
         {
             await CreateEnvironment(projectName);
+        }        
+
+        public async Task CreateRepository(string repositoryName)
+        {
+            _vstsGitClient = _connection.GetClient<GitHttpClient>();
+
+            await _vstsGitClient.CreateRepositoryAsync(new GitRepository() { Name = repositoryName }, _vstsConfig.Project);
         }
 
-        public override async Task<ConfigVstsVerb> ReadEnvironmentConfig<ConfigVstsVerb>()
+        public override async Task<string[]> DefinePluginSection(ConfigVstsVerb opts)
         {
-            var vstsConfigAsString = File.ReadAllLines(envyxConfigFile);
+            return new string[] { "[vsts]", $"instance={opts.Instance}", $"project={opts.Project}", $"token={opts.Token}" };
+        }
 
-            var vstsConfigAsStringArray = vstsConfigAsString
-             .Where(l => !string.IsNullOrEmpty(l))
-             .SkipWhile(line => !line.Contains("[vsts]"))
-             .Skip(1)
-             .TakeWhile(line => !line.Contains("["));
+        public override async Task<ConfigVstsVerb> ReadDefinedConfigSections(IEnumerable<string[]> pluginConfigSplited)
+        {
+            var vstsConfig = new ConfigVstsVerb();
 
-            var vstsConfigSplited = vstsConfigAsStringArray.Select(c => c.Split('='));
-
-            var vstsConfig = new ConfigVerb.ConfigVstsVerb();
-
-            foreach (var config in vstsConfigSplited)
+            foreach (var config in pluginConfigSplited)
             {
                 if (config[0] == "instance")
                 {
@@ -57,18 +59,6 @@ namespace vsts_plugin
             }
 
             return vstsConfig;
-        }
-
-        public override async Task SetEnvironmentConfig<ConfigVstsVerb>(ConfigVstsVerb opts)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task CreateRepository(string repositoryName)
-        {
-            _vstsGitClient = _connection.GetClient<GitHttpClient>();
-
-            await _vstsGitClient.CreateRepositoryAsync(new GitRepository() { Name = repositoryName }, _vstsConfig.Project);
         }
 
         private async Task ConnectToVsts()
