@@ -83,7 +83,7 @@ namespace ci_x_core
         private bool ConfigDoesNotExist(string envyxConfigFile)
         {
             var lines = File.ReadAllLines(envyxConfigFile).ToList();
-            return lines.IndexOf("[vsts]") == -1;
+            return lines.IndexOf($"[{_pluginTag}]") == -1;
         }
 
         public void ClearFileContent(string envyxConfigFile)
