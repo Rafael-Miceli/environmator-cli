@@ -12,32 +12,32 @@ namespace environmator_cli.Services
     public class VstsService : IVstsService
     {
         private readonly IConfigRepository _configRepository;
-        private ConfigVerb.ConfigVstsVerb _vstsConfig;
+        //private ConfigVerb.ConfigVstsVerb _vstsConfig;
         private VssConnection _connection;
         private GitHttpClient _vstsGitClient;
 
         public VstsService(IConfigRepository configRepository)
         {
             _configRepository = configRepository;
-            _vstsConfig = _configRepository.ReadVstsConfig();
+            //_vstsConfig = _configRepository.ReadVstsConfig();
             ConnectToVsts();
         }
         
         public async Task CreateRepository(string repositoryName)
         {
-            _vstsGitClient = _connection.GetClient<GitHttpClient>();
+            //_vstsGitClient = _connection.GetClient<GitHttpClient>();
             
-            await _vstsGitClient.CreateRepositoryAsync(new GitRepository() { Name = repositoryName }, _vstsConfig.Project);            
+            //await _vstsGitClient.CreateRepositoryAsync(new GitRepository() { Name = repositoryName }, _vstsConfig.Project);            
         }
 
         private void ConnectToVsts()
         {
-            VssCredentials creds = new VssBasicCredential(string.Empty, _vstsConfig.Token);
-            //creds.Storage = new VssClientCredentialStorage();
+            //VssCredentials creds = new VssBasicCredential(string.Empty, _vstsConfig.Token);
+            ////creds.Storage = new VssClientCredentialStorage();
 
-            var vstsCollectionUrl = $"https://{_vstsConfig.Instance}.visualstudio.com";
+            //var vstsCollectionUrl = $"https://{_vstsConfig.Instance}.visualstudio.com";
 
-            _connection = new VssConnection(new Uri(vstsCollectionUrl), creds);
+            //_connection = new VssConnection(new Uri(vstsCollectionUrl), creds);
         }
     }
 }

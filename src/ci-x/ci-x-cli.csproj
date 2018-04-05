@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\lib\vsts-plugin\vsts-plugin.csproj" />
     <ProjectReference Include="..\ci-x-core\ci-x-core.csproj" />
   </ItemGroup>
 

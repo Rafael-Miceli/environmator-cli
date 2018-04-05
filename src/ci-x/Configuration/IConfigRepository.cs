@@ -3,7 +3,7 @@
     public interface IConfigRepository
     {
         void ClearFileContent(string envyxConfigFile);
-        ConfigVerb.ConfigVstsVerb ReadVstsConfig();
-        void SetVstsConfig(ConfigVerb.ConfigVstsVerb opts);
+        //ConfigVerb.ConfigVstsVerb ReadVstsConfig();
+        //void SetVstsConfig(ConfigVerb.ConfigVstsVerb opts);
     }
 }

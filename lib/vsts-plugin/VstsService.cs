@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace vsts_plugin
 {
-    public class VstsService : EnvironmentPluginService<ConfigVstsVerb>
+    public class VstsService : EnvironmentPluginService
     {
         private ConfigVstsVerb _vstsConfig;
         private VssConnection _connection;
@@ -16,7 +16,7 @@ namespace vsts_plugin
 
         public VstsService(): base("vsts")
         {
-            _vstsConfig = ReadPluginConfig().Result;
+            _vstsConfig = (ConfigVstsVerb)ReadPluginConfig().Result;
             ConnectToVsts();
         }
 

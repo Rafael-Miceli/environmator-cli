@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace ci_x_core
 {
-    public abstract class EnvironmentPluginService<T>
+    public abstract class EnvironmentPluginService
     {
         public abstract Task CreateEnvironment(string projectName, string description = null);
-        public abstract Task<string[]> DefinePluginSection(T opts);
-        public abstract Task<T> ReadDefinedConfigSections(IEnumerable<string[]> pluginConfigSplited);
+        public abstract Task<string[]> DefinePluginSection(ConfigVerb opts);
+        public abstract Task<ConfigVerb> ReadDefinedConfigSections(IEnumerable<string[]> pluginConfigSplited);
 
 
         private string appDataPath => Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -29,7 +29,7 @@ namespace ci_x_core
             envyxConfigFile = Path.Combine(envyxDir, "config.");
         }
 
-        public async Task SetPluginConfig(T configSection)
+        public async Task SetPluginConfig(ConfigVerb configSection)
         {
             var newPluginSection = await DefinePluginSection(configSection);
 
@@ -63,7 +63,7 @@ namespace ci_x_core
             }
         }
 
-        public async Task<T> ReadPluginConfig()
+        public async Task<ConfigVerb> ReadPluginConfig()
         {
             var pluginConfigAsString = File.ReadAllLines(envyxConfigFile);
 
