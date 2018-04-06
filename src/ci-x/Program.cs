@@ -16,12 +16,22 @@ namespace environmator_cli
 
         static int Main(string[] args)
         {
-            //_configRepository = new ConfigRepository();
-            //_vstsService = new VstsService(_configRepository);
+            // Descobrir como pegar plugins dinamicamente
             _plugins = new List<EnvironmentPluginService>
             {
                 new vsts_plugin.VstsService()
             };
+
+
+            List<Func<dynamic, int>> pluginsDefineConfigFuncs = new List<Func<dynamic, int>>();
+
+            foreach (var plugin in _plugins)
+            {
+                Func<dynamic, int> pluginConfigType = GetPluginDefineConfigType(plugin);
+
+                pluginsDefineConfigFuncs.Add(pluginConfigType);
+            }
+
 
             return Parser.Default.ParseVerbs<ConfigVerb, NewVerb>(args)
                  .MapResult(
@@ -30,6 +40,11 @@ namespace environmator_cli
                  (NewVerb.ProjectVerb opts) => RunNewProjectAndReturnExitCode(opts),
                  //(ConfigVerb.ConfigVstsVerb opts) => RunConfigVstsAndReturnExitCode(opts),
                  errs => 1);            
+        }
+
+        private static Func<dynamic, int> GetPluginDefineConfigType(EnvironmentPluginService plugin)
+        {
+            throw new NotImplementedException();
         }
 
         private static int RunConfigAndReturnExitCode(object opts)
@@ -104,22 +119,22 @@ namespace environmator_cli
         //    return 0;
         //}
 
-        private static int RunSetEnvironmentsConfig(ConfigVerb opts)
-        {
-            //Dreaming:
-            foreach (var configPlugin in _plugins)
-            {
-                try
-                {
-                    configPlugin.SetPluginConfig(opts);
-                }
-                catch (Exception ex)
-                {
-                    //Log error
-                }                
-            }
+        //private static int RunSetEnvironmentsConfig(ConfigVerb opts)
+        //{
+        //    //Dreaming:
+        //    foreach (var configPlugin in _plugins)
+        //    {
+        //        try
+        //        {
+        //            configPlugin.SetPluginConfig(opts);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            //Log error
+        //        }                
+        //    }
 
-            return 0;
-        }
+        //    return 0;
+        //}
     }
 }

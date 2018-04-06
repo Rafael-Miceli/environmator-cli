@@ -22,7 +22,7 @@ namespace vsts_plugin
 
         public override async Task CreateEnvironment(string projectName, string description = null)
         {
-            await CreateEnvironment(projectName);
+            await CreateRepository(projectName);
         }        
 
         public async Task CreateRepository(string repositoryName)
