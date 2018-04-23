@@ -10,8 +10,6 @@ namespace environmator_cli
 {
     public class Program
     {
-        //private static IConfigRepository _configRepository;
-        //private static IVstsService _vstsService;
         private static IEnumerable<EnvironmentPluginService> _plugins;
 
         static int Main(string[] args)
@@ -21,25 +19,7 @@ namespace environmator_cli
             {
                 new vsts_plugin.VstsService()
             };
-
-
-            List<Func<dynamic, int>> pluginsDefineConfigFuncs = new List<Func<dynamic, int>>();
-
-            foreach (var plugin in _plugins)
-            {
-                Func<dynamic, int> pluginConfigType = GetPluginDefineConfigType(plugin);
-
-                pluginsDefineConfigFuncs.Add(pluginConfigType);
-            }
-
-
-            return Parser.Default.ParseVerbs<ConfigVerb, NewVerb>(args)
-                 .MapResult(
-                 (ConfigVerb opts) => RunConfigAndReturnExitCode(opts),
-                 (NewVerb opts) => RunNewAndReturnExitCode(opts),
-                 (NewVerb.ProjectVerb opts) => RunNewProjectAndReturnExitCode(opts),
-                 //(ConfigVerb.ConfigVstsVerb opts) => RunConfigVstsAndReturnExitCode(opts),
-                 errs => 1);            
+            
         }
 
         private static Func<dynamic, int> GetPluginDefineConfigType(EnvironmentPluginService plugin)

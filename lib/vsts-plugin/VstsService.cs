@@ -37,6 +37,11 @@ namespace vsts_plugin
             return new string[] { "[vsts]", $"instance={opts.Instance}", $"project={opts.Project}", $"token={opts.Token}" };
         }
 
+        public override Task<string[]> DefinePluginSection(ConfigVerb opts)
+        {
+            throw new NotImplementedException();
+        }
+
         public override async Task<ConfigVstsVerb> ReadDefinedConfigSections(IEnumerable<string[]> pluginConfigSplited)
         {
             var vstsConfig = new ConfigVstsVerb();

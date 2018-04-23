@@ -36,7 +36,7 @@ namespace environmator_cli
         [Verb("project", HelpText = "Create a new project in all environments defined in default configuration or by the parameters.")]
         public class ProjectVerb
         {
-            [Option('n', "name", HelpText = "Your vsts instance.", Required = true)]
+            [Option('n', "name", HelpText = "Your project name.", Required = true)]
             public string Name { get; set; }
         }
     }
