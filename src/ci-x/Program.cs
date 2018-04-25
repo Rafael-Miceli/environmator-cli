@@ -4,117 +4,112 @@ using CommandLine;
 using environmator_cli.Configuration;
 using environmator_cli.Services;
 using ci_x_core;
-
+using System.Linq;
 
 namespace environmator_cli
 {
     public class Program
     {
         private static IEnumerable<EnvironmentPluginService> _plugins;
+        private static IEnumerable<Command> _commands;
 
         static int Main(string[] args)
         {
+            InitializeCommands();
+
+
+            if (args.Length <= 0)
+            {
+                Console.WriteLine("Command not found try one of these: ");
+                ShowCommands();
+                return -1;
+            }
+
+            var commands = args.Select(c => c.ToLower()).ToArray();
+
+            foreach (var typedCommand in commands)
+            {
+                if (typedCommand.StartsWith("-"))
+                {
+                    //Validate Option
+                }
+
+                var command = _commands.FirstOrDefault(c => c.Verb == typedCommand);
+                command.Action();
+            }
+
+            if (commands[0] == "-h" || commands[0] == "--help")
+            {
+                ShowCommands();
+                return 0;
+            }
+
+
             // Descobrir como pegar plugins dinamicamente
             _plugins = new List<EnvironmentPluginService>
             {
                 new vsts_plugin.VstsService()
             };
-            
-        }
 
-        private static Func<dynamic, int> GetPluginDefineConfigType(EnvironmentPluginService plugin)
-        {
-            throw new NotImplementedException();
-        }
-
-        private static int RunConfigAndReturnExitCode(object opts)
-        {
-            return 0;
-        }
-
-        private static int RunNewAndReturnExitCode(object opts)
-        {
-            return 0;
-        }
-
-        private static int RunNewProjectAndReturnExitCode(NewVerb.ProjectVerb opts)
-        {
-            //var result = CreateVstsRepo(opts.Name);
-
-            //result = CreateJenkinsJob(opts.Name);
 
             return 0;
         }
 
-
-        private static int RunCreateEnvironments(NewVerb.ProjectVerb opts)
+        private static void InitializeCommands()
         {
-            //Dreaming:
-            foreach (var creatorPlugin in _plugins)
+            _commands = new List<Command>
             {
-                try
-                {
-                    creatorPlugin.CreateEnvironment(opts.Name);
-                }
-                catch (Exception ex)
-                {
-                    //Log error
-                }
-                
-            }
-
-            return 0;
+                new Config()
+            };
         }
 
-
-        private static int CreateJenkinsJob(string name)
+        private static void ShowCommands()
         {
-            return 0;
+            Console.WriteLine("");
+            Console.WriteLine("Commands:");
+            Console.WriteLine("   new       Create a new project in all environments defined in default configuration or by the parameters.");
+            Console.WriteLine("   config    Show the configuration to access you repositories, platforms, and C.I. builders.");
         }
-
-        //private static int CreateVstsRepo(string repositoryName)
-        //{
-        //    Console.WriteLine($"Creating {repositoryName} repository in vsts.");
-
-        //    try
-        //    {
-        //        _vstsService.CreateRepository(repositoryName).Wait();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine($"Sorry, but we had a problem trying to create {repositoryName} repository");
-        //        Console.WriteLine(ex.Message);
-        //        return 1;
-        //    }
-
-        //    Console.WriteLine($"{repositoryName} repository created!");
-
-        //    return 0;
-        //}
-        
-        //private static int RunConfigVstsAndReturnExitCode(ConfigVerb.ConfigVstsVerb opts)
-        //{
-        //    //_configRepository.SetVstsConfig(opts);
-            
-        //    return 0;
-        //}
-
-        //private static int RunSetEnvironmentsConfig(ConfigVerb opts)
-        //{
-        //    //Dreaming:
-        //    foreach (var configPlugin in _plugins)
-        //    {
-        //        try
-        //        {
-        //            configPlugin.SetPluginConfig(opts);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            //Log error
-        //        }                
-        //    }
-
-        //    return 0;
-        //}
     }
+
+    public abstract class Command
+    {
+        public abstract string Verb { get; }
+        public abstract string[] Options { get; }
+        public abstract string Help { get; }
+
+        public abstract void Action();
+    }
+
+    public class Config : Command
+    {
+        public override string Verb => "config";
+
+        public override string[] Options => new [] {""};
+
+        public override string Help => "Show the configuration to access you repositories, platforms, and C.I. builders.";
+
+        public override void Action() => Terminal.Output(Help);
+    }
+
+    public class Vsts : Command
+    {
+        public override string Verb => "vsts";
+
+        public override string[] Options => new[] { "-i", "-t" };
+
+        public override string Help => "Set your vsts configuration";
+
+        public override void Action()
+        {            
+
+            Terminal.Output(Help);
+        }
+    }
+
+    public static class Terminal
+    {
+        public static void Output(string value) => Console.WriteLine(value);
+    }
+
 }
