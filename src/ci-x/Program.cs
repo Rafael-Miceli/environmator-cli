@@ -27,15 +27,17 @@ namespace environmator_cli
 
             var commands = args.Select(c => c.ToLower()).ToArray();
 
-            foreach (var typedCommand in commands)
+            if (commands[0] == "new-project")
             {
-                if (typedCommand.StartsWith("-"))
-                {
-                    //Validate Option
-                }
+                //Apply new project creation
+                return 0;
+            }
 
-                var command = _commands.FirstOrDefault(c => c.Verb == typedCommand);
-                command.Action();
+            if (commands[0] == "config")
+            {
+                //Apply config
+
+                //Search if next verb exist in config
             }
 
             if (commands[0] == "-h" || commands[0] == "--help")
@@ -67,8 +69,8 @@ namespace environmator_cli
         {
             Console.WriteLine("");
             Console.WriteLine("Commands:");
-            Console.WriteLine("   new       Create a new project in all environments defined in default configuration or by the parameters.");
-            Console.WriteLine("   config    Show the configuration to access you repositories, platforms, and C.I. builders.");
+            Console.WriteLine("   new-project   Create a new project in all environments defined in default configuration or by the parameters.");
+            Console.WriteLine("   config        Show the configuration to access you repositories, platforms, and C.I. builders.");
         }
     }
 
