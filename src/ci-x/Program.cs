@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using CommandLine;
-using environmator_cli.Configuration;
-using environmator_cli.Services;
 using ci_x_core;
 using System.Linq;
 
@@ -40,19 +37,11 @@ namespace environmator_cli
                 //Search if next verb exist in config
             }
 
-            if (commands[0] == "-h" || commands[0] == "--help")
+            if (commands[0] == "-h" || commands[0] == "--help" || commands[0] == "help")
             {
                 ShowCommands();
                 return 0;
             }
-
-
-            // Descobrir como pegar plugins dinamicamente
-            _plugins = new List<EnvironmentPluginService>
-            {
-                new vsts_plugin.VstsService()
-            };
-
 
             return 0;
         }
@@ -61,7 +50,7 @@ namespace environmator_cli
         {
             _commands = new List<Command>
             {
-                new Config()
+                new Vsts()
             };
         }
 
@@ -81,17 +70,6 @@ namespace environmator_cli
         public abstract string Help { get; }
 
         public abstract void Action();
-    }
-
-    public class Config : Command
-    {
-        public override string Verb => "config";
-
-        public override string[] Options => new [] {""};
-
-        public override string Help => "Show the configuration to access you repositories, platforms, and C.I. builders.";
-
-        public override void Action() => Terminal.Output(Help);
     }
 
     public class Vsts : Command

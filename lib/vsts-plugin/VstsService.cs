@@ -32,39 +32,44 @@ namespace vsts_plugin
             await _vstsGitClient.CreateRepositoryAsync(new GitRepository() { Name = repositoryName }, _vstsConfig.Project);
         }
 
-        public override async Task<string[]> DefinePluginSection(ConfigVstsVerb opts)
-        {
-            return new string[] { "[vsts]", $"instance={opts.Instance}", $"project={opts.Project}", $"token={opts.Token}" };
-        }
+        //public override async Task<string[]> DefinePluginSection(ConfigVstsVerb opts)
+        //{
+        //    return new string[] { "[vsts]", $"instance={opts.Instance}", $"project={opts.Project}", $"token={opts.Token}" };
+        //}
 
         public override Task<string[]> DefinePluginSection(ConfigVerb opts)
         {
             throw new NotImplementedException();
         }
 
-        public override async Task<ConfigVstsVerb> ReadDefinedConfigSections(IEnumerable<string[]> pluginConfigSplited)
+        public override Task<ConfigVerb> ReadDefinedConfigSections(IEnumerable<string[]> pluginConfigSplited)
         {
-            var vstsConfig = new ConfigVstsVerb();
-
-            foreach (var config in pluginConfigSplited)
-            {
-                if (config[0] == "instance")
-                {
-                    vstsConfig.Instance = config[1];
-                    continue;
-                }
-
-                if (config[0] == "project")
-                {
-                    vstsConfig.Project = config[1];
-                    continue;
-                }
-
-                vstsConfig.Token = config[1];
-            }
-
-            return vstsConfig;
+            throw new NotImplementedException();
         }
+
+        //public override async Task<ConfigVstsVerb> ReadDefinedConfigSections(IEnumerable<string[]> pluginConfigSplited)
+        //{
+        //    var vstsConfig = new ConfigVstsVerb();
+
+        //    foreach (var config in pluginConfigSplited)
+        //    {
+        //        if (config[0] == "instance")
+        //        {
+        //            vstsConfig.Instance = config[1];
+        //            continue;
+        //        }
+
+        //        if (config[0] == "project")
+        //        {
+        //            vstsConfig.Project = config[1];
+        //            continue;
+        //        }
+
+        //        vstsConfig.Token = config[1];
+        //    }
+
+        //    return vstsConfig;
+        //}
 
         private async Task ConnectToVsts()
         {
