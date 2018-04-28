@@ -32,12 +32,30 @@ namespace environmator_cli
 
             if (commands[0] == "config")
             {
-                ShowConfigCommands();
+                if (commands.Length <= 1 || IsAskingHelp(commands[1]))
+                {
+                    ShowConfigCommands();
+                    return 0;
+                }                    
 
-                //Search if next verb exist in config
+                var selectedConfig = _commands.FirstOrDefault(c => c.Verb == commands[1]);
+
+                if (selectedConfig == null)
+                {
+                    Console.WriteLine($"Config `{commands[1]}` not found... =/ Here are the configs you have:");
+                    ShowConfigCommands();
+                    return 0;
+                }
+
+                if (commands.Length <= 2 || IsAskingHelp(commands[2]))
+                {
+                    ShowConfigOptions(selectedConfig);
+                    return 0;
+                }
+
             }
 
-            if (commands[0] == "-h" || commands[0] == "--help" || commands[0] == "help")
+            if (IsAskingHelp(commands[0]))
             {
                 ShowCommands();
                 return 0;
@@ -52,6 +70,11 @@ namespace environmator_cli
             {
                 new Vsts()
             };
+        }
+
+        private static bool IsAskingHelp(string command)
+        {
+            return command == "-h" || command == "--help" || command == "help";
         }
 
         private static void ShowCommands()
@@ -71,12 +94,22 @@ namespace environmator_cli
                 Console.WriteLine($"   {command.Verb}   {command.Help}.");
             }            
         }
+
+        private static void ShowConfigOptions(Command command)
+        {
+            Console.WriteLine("");
+            Console.WriteLine($"config {command.Verb} options:");
+            foreach (var option in command.Options)
+            {
+                Console.WriteLine($"   -{option.TerminalShortName} --{option.TerminalLongName}   {option.Help}.");
+            }
+        }
     }
 
     public abstract class Command
     {
         public abstract string Verb { get; }
-        public abstract string[] Options { get; }
+        public abstract Option[] Options { get; }
         public abstract string Help { get; }
 
         public abstract void Action();
@@ -86,15 +119,39 @@ namespace environmator_cli
     {
         public override string Verb => "vsts";
 
-        public override string[] Options => new[] { "-i", "-t" };
+        public override Option[] Options => new Option[] {
+            new Option("instance", "i", "instance", "Your vsts instance.")
+        };
 
-        public override string Help => "Set your vsts configuration";
+        public override string Help => "Set the options to use your VSTS environment";
 
         public override void Action()
-        {            
-
+        {
             Terminal.Output(Help);
         }
+    }
+
+    public class Option
+    {
+        public Option(
+            string name, 
+            string terminalShortName, 
+            string terminalLongName = "", 
+            string help = "", 
+            bool isRequired = true)
+        {
+            Name = name;
+            TerminalShortName = terminalShortName;
+            TerminalLongName = terminalShortName;
+            Help = help;
+            IsRequired = isRequired;
+        }
+
+        public string Name { get; }
+        public string TerminalShortName { get; }
+        public string TerminalLongName { get; }        
+        public string Help { get; }
+        public bool IsRequired { get; }
     }
 
     public static class Terminal
