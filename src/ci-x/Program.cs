@@ -101,7 +101,11 @@ namespace environmator_cli
             Console.WriteLine($"config {command.Verb} options:");
             foreach (var option in command.Options)
             {
-                Console.WriteLine($"   -{option.TerminalShortName} --{option.TerminalLongName}   {option.Help}.");
+                Console.Write($"   -{option.TerminalShortName} ");
+                if (!string.IsNullOrEmpty(option.TerminalLongName))
+                    Console.Write($"--{option.TerminalLongName}");
+
+                Console.WriteLine($"    {option.Help}");
             }
         }
     }
@@ -120,7 +124,9 @@ namespace environmator_cli
         public override string Verb => "vsts";
 
         public override Option[] Options => new Option[] {
-            new Option("instance", "i", "instance", "Your vsts instance.")
+            new Option("instance", "i", "instance", "Your vsts instance."),
+            new Option("project", "p", "project", "Your vsts project."),
+            new Option("token", "t", "token", "Your vsts personal token, to see how to generate a personal token follow this link: https://docs.microsoft.com/en-us/vsts/accounts/use-personal-access-tokens-to-authenticate?view=vsts")
         };
 
         public override string Help => "Set the options to use your VSTS environment";
@@ -142,7 +148,7 @@ namespace environmator_cli
         {
             Name = name;
             TerminalShortName = terminalShortName;
-            TerminalLongName = terminalShortName;
+            TerminalLongName = terminalLongName;
             Help = help;
             IsRequired = isRequired;
         }
