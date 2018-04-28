@@ -32,7 +32,7 @@ namespace environmator_cli
 
             if (commands[0] == "config")
             {
-                //Apply config
+                ShowConfigCommands();
 
                 //Search if next verb exist in config
             }
@@ -60,6 +60,16 @@ namespace environmator_cli
             Console.WriteLine("Commands:");
             Console.WriteLine("   new-project   Create a new project in all environments defined in default configuration or by the parameters.");
             Console.WriteLine("   config        Show the configuration to access you repositories, platforms, and C.I. builders.");
+        }
+
+        private static void ShowConfigCommands()
+        {
+            Console.WriteLine("");
+            Console.WriteLine("configs:");
+            foreach (var command in _commands)
+            {
+                Console.WriteLine($"   {command.Verb}   {command.Help}.");
+            }            
         }
     }
 
