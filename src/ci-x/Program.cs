@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using ci_x_core;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace environmator_cli
 {
@@ -53,6 +54,20 @@ namespace environmator_cli
                     return 0;
                 }
 
+                Dictionary<string, string> optionsAndValues = GetOptionsAndItsValues(commands);
+                List<string> requiredOptionsNotFilled = RequiredOptionsNotFilled(optionsAndValues, selectedConfig);
+
+                if (requiredOptionsNotFilled.Any())
+                {
+                    Console.Write("Required options: ");
+                    foreach (var requiredOptionNotFilled in requiredOptionsNotFilled)
+                        Console.Write($"{requiredOptionNotFilled},");
+                    Console.WriteLine(" not filled");
+                    
+                    return -1;
+                }
+
+                selectedConfig.WriteConfig(optionsAndValues).Wait();
             }
 
             if (IsAskingHelp(commands[0]))
@@ -62,6 +77,35 @@ namespace environmator_cli
             }
 
             return 0;
+        }
+
+        private static List<string> RequiredOptionsNotFilled(Dictionary<string, string> optionsAndValues, Command selectedConfig)
+        {
+            var requiredOptionsShortNames = selectedConfig.Options.Where(o => o.IsRequired).Select(o => o.TerminalShortName);
+            var requiredOptionsLongNames = selectedConfig.Options.Where(o => o.IsRequired).Select(o => o.TerminalLongName);
+
+
+        }
+
+        private static Dictionary<string, string> GetOptionsAndItsValues(string[] commands)
+        {
+            var optionsAndVaues = new Dictionary<string, string>();
+
+            for (int i = 2; i <= commands.Length; i++)
+            {
+                var option = commands[i];
+                i++;
+
+                var value = "";
+                if (i <= commands.Length)
+                {
+                    value = commands[i];
+                }
+
+                optionsAndVaues.Add(option, value);
+            }
+
+            return optionsAndVaues;
         }
 
         private static void InitializeCommands()
@@ -116,7 +160,12 @@ namespace environmator_cli
         public abstract Option[] Options { get; }
         public abstract string Help { get; }
 
-        public abstract void Action();
+        public abstract void CreateEnvironment();
+
+        public async Task WriteConfig(Dictionary<string, string> optionsAndValues)
+        {
+
+        }
     }
 
     public class Vsts : Command
@@ -131,7 +180,7 @@ namespace environmator_cli
 
         public override string Help => "Set the options to use your VSTS environment";
 
-        public override void Action()
+        public override void CreateEnvironment()
         {
             Terminal.Output(Help);
         }
