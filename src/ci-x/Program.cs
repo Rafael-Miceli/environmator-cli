@@ -54,8 +54,9 @@ namespace environmator_cli
                     return 0;
                 }
 
-                Dictionary<string, string> optionsAndValues = GetOptionsAndItsValues(commands);
-                List<string> requiredOptionsNotFilled = RequiredOptionsNotFilled(optionsAndValues, selectedConfig);
+                Dictionary<string, string> rawOptionsAndValues = GetOptionsAndItsValues(commands);
+                
+                List<string> requiredOptionsNotFilled = RequiredOptionsNotFilled(rawOptionsAndValues, selectedConfig);
 
                 if (requiredOptionsNotFilled.Any())
                 {
@@ -67,7 +68,10 @@ namespace environmator_cli
                     return -1;
                 }
 
+                var optionsAndValues = TransformRawOptionsToObject(rawOptionsAndValues, selectedConfig);
+
                 selectedConfig.WriteConfig(optionsAndValues).Wait();
+                return 0;
             }
 
             if (IsAskingHelp(commands[0]))
@@ -79,19 +83,41 @@ namespace environmator_cli
             return 0;
         }
 
+        private static Dictionary<Option, string> TransformRawOptionsToObject(Dictionary<string, string> rawOptionsAndValues, Command selectedConfig)
+        {
+            var optionsCommands = selectedConfig.Options;
+
+            var optionsAndValues = new Dictionary<Option, string>();
+
+            foreach (var option in optionsCommands)
+            {
+                var matchedRawOptionAndValue = rawOptionsAndValues.FirstOrDefault(op => op.Key == ("-" + option.TerminalShortName) || op.Key == ("--" + option.TerminalLongName));                
+                optionsAndValues.Add(option, matchedRawOptionAndValue.Value);
+            }
+
+            return optionsAndValues;
+        }
+
         private static List<string> RequiredOptionsNotFilled(Dictionary<string, string> optionsAndValues, Command selectedConfig)
         {
-            var requiredOptionsShortNames = selectedConfig.Options.Where(o => o.IsRequired).Select(o => o.TerminalShortName);
-            var requiredOptionsLongNames = selectedConfig.Options.Where(o => o.IsRequired).Select(o => o.TerminalLongName);
+            var requiredOptionsCommands = selectedConfig.Options.Where(o => o.IsRequired);
+            var optionsFromArgs = optionsAndValues.Select(o => o.Key);
+            
+            var requiredOptionsNotFilled = new List<string>();
+            foreach (var requiredOption in requiredOptionsCommands)
+            {                
+                if (!optionsFromArgs.Any(op => op == ("-" + requiredOption.TerminalShortName) || op == ("--" + requiredOption.TerminalLongName)))
+                    requiredOptionsNotFilled.Add(requiredOption.Name);
+            }
 
-
+            return requiredOptionsNotFilled;
         }
 
         private static Dictionary<string, string> GetOptionsAndItsValues(string[] commands)
         {
             var optionsAndVaues = new Dictionary<string, string>();
 
-            for (int i = 2; i <= commands.Length; i++)
+            for (int i = 2; i < commands.Length; i++)
             {
                 var option = commands[i];
                 i++;
@@ -162,9 +188,13 @@ namespace environmator_cli
 
         public abstract void CreateEnvironment();
 
-        public async Task WriteConfig(Dictionary<string, string> optionsAndValues)
+        public async Task WriteConfig(Dictionary<Option, string> optionsAndValues)
         {
-
+            Console.WriteLine("Indo escrever essas opções no Config");
+            foreach (var option in optionsAndValues)
+            {
+                Console.WriteLine($"opcao: {option.Key.Name} valor: {option.Value}");
+            }
         }
     }
 
@@ -174,7 +204,7 @@ namespace environmator_cli
 
         public override Option[] Options => new Option[] {
             new Option("instance", "i", "instance", "Your vsts instance."),
-            new Option("project", "p", "project", "Your vsts project."),
+            new Option("project", "p", "projec", "Your vsts project."),
             new Option("token", "t", "token", "Your vsts personal token, to see how to generate a personal token follow this link: https://docs.microsoft.com/en-us/vsts/accounts/use-personal-access-tokens-to-authenticate?view=vsts")
         };
 
@@ -190,16 +220,16 @@ namespace environmator_cli
     {
         public Option(
             string name, 
-            string terminalShortName, 
-            string terminalLongName = "", 
+            string commandShortName, 
+            string commandLongName = "", 
             string help = "", 
             bool isRequired = true)
         {
             Name = name;
-            TerminalShortName = terminalShortName;
-            TerminalLongName = terminalLongName;
+            TerminalShortName = commandShortName;
+            TerminalLongName = commandLongName;
             Help = help;
-            IsRequired = isRequired;
+            IsRequired = isRequired;            
         }
 
         public string Name { get; }
@@ -207,7 +237,7 @@ namespace environmator_cli
         public string TerminalLongName { get; }        
         public string Help { get; }
         public bool IsRequired { get; }
-    }
+    }    
 
     public static class Terminal
     {
