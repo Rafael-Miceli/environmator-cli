@@ -8,7 +8,6 @@ namespace environmator_cli
 {
     public class Program
     {
-        private static IEnumerable<EnvironmentPluginService> _plugins;
         private static IEnumerable<Command> _commands;
 
         static int Main(string[] args)
