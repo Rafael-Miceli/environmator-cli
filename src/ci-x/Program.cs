@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using ci_x_core;
 using System.Linq;
-using System.Threading.Tasks;
+using vsts_plugin;
 
 namespace environmator_cli
 {
@@ -179,69 +179,4 @@ namespace environmator_cli
             }
         }
     }
-
-    public abstract class Command
-    {
-        public abstract string Verb { get; }
-        public abstract Option[] Options { get; }
-        public abstract string Help { get; }
-
-        public abstract void CreateEnvironment();
-
-        public async Task WriteConfig(Dictionary<Option, string> optionsAndValues)
-        {
-            Console.WriteLine("Indo escrever essas opções no Config");
-            foreach (var option in optionsAndValues)
-            {
-                Console.WriteLine($"opcao: {option.Key.Name} valor: {option.Value}");
-            }
-        }
-    }
-
-    public class Vsts : Command
-    {
-        public override string Verb => "vsts";
-
-        public override Option[] Options => new Option[] {
-            new Option("instance", "i", "instance", "Your vsts instance."),
-            new Option("project", "p", "projec", "Your vsts project."),
-            new Option("token", "t", "token", "Your vsts personal token, to see how to generate a personal token follow this link: https://docs.microsoft.com/en-us/vsts/accounts/use-personal-access-tokens-to-authenticate?view=vsts")
-        };
-
-        public override string Help => "Set the options to use your VSTS environment";
-
-        public override void CreateEnvironment()
-        {
-            Terminal.Output(Help);
-        }
-    }
-
-    public class Option
-    {
-        public Option(
-            string name, 
-            string commandShortName, 
-            string commandLongName = "", 
-            string help = "", 
-            bool isRequired = true)
-        {
-            Name = name;
-            TerminalShortName = commandShortName;
-            TerminalLongName = commandLongName;
-            Help = help;
-            IsRequired = isRequired;            
-        }
-
-        public string Name { get; }
-        public string TerminalShortName { get; }
-        public string TerminalLongName { get; }        
-        public string Help { get; }
-        public bool IsRequired { get; }
-    }    
-
-    public static class Terminal
-    {
-        public static void Output(string value) => Console.WriteLine(value);
-    }
-
 }
