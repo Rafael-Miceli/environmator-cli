@@ -36,7 +36,7 @@ namespace environmator_cli
                 {
                     ShowConfigCommands();
                     return 0;
-                }                    
+                }
 
                 var selectedConfig = _commands.FirstOrDefault(c => c.Verb == commands[1]);
 
