@@ -53,20 +53,31 @@ namespace environmator_cli
 
             if (!(commands[1] == "-n" || commands[1] == "--name"))
             {
-                Console.WriteLine("Specify your project name option");
+                Console.WriteLine("Specify your project name option.");
                 return -1;
             }
 
             if (commands.Length <= 2)
             {
-                Console.WriteLine("Specify your project name option");
+                Console.WriteLine("Specify your project name option.");
                 return -1;
             }
 
             foreach (var command in _commands)
             {
-                var options = command.ReadConfig().Result;
-                command.CreateEnvironment(commands[2], options);
+                Console.WriteLine($"Creating your environment in {command.Verb}");
+
+                try
+                {
+                    var options = command.ReadConfig().Result;
+                    command.CreateEnvironment(commands[2], options);
+                }
+                catch (Exception ex)
+                {
+                    //Logar exceção
+                    Console.WriteLine($"Error when creating your environment in {command.Verb}, See the logs for more information.");
+                }
+                
             }
 
             return 0;
