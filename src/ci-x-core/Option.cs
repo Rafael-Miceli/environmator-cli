@@ -21,5 +21,14 @@
         public string TerminalLongName { get; }
         public string Help { get; }
         public bool IsRequired { get; }
+
+        public string Value { get; private set; }
+
+        internal Option SetValue(string value)
+        {
+            Value = value;
+
+            return this;
+        }
     }
 }

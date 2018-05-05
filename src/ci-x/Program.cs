@@ -14,7 +14,6 @@ namespace environmator_cli
         {
             InitializeCommands();
 
-
             if (args.Length <= 0)
             {
                 Console.WriteLine("Command not found try one of these: ");
@@ -26,51 +25,12 @@ namespace environmator_cli
 
             if (commands[0] == "new-project")
             {
-                //Apply new project creation
-                return 0;
+                ManageNewProject(commands);
             }
 
             if (commands[0] == "config")
             {
-                if (commands.Length <= 1 || IsAskingHelp(commands[1]))
-                {
-                    ShowConfigCommands();
-                    return 0;
-                }
-
-                var selectedConfig = _commands.FirstOrDefault(c => c.Verb == commands[1]);
-
-                if (selectedConfig == null)
-                {
-                    Console.WriteLine($"Config `{commands[1]}` not found... =/ Here are the configs you have:");
-                    ShowConfigCommands();
-                    return 0;
-                }
-
-                if (commands.Length <= 2 || IsAskingHelp(commands[2]))
-                {
-                    ShowConfigOptions(selectedConfig);
-                    return 0;
-                }
-
-                Dictionary<string, string> rawOptionsAndValues = GetOptionsAndItsValues(commands);
-                
-                List<string> requiredOptionsNotFilled = RequiredOptionsNotFilled(rawOptionsAndValues, selectedConfig);
-
-                if (requiredOptionsNotFilled.Any())
-                {
-                    Console.Write("Required options: ");
-                    foreach (var requiredOptionNotFilled in requiredOptionsNotFilled)
-                        Console.Write($"{requiredOptionNotFilled},");
-                    Console.WriteLine(" not filled");
-                    
-                    return -1;
-                }
-
-                var optionsAndValues = TransformRawOptionsToObject(rawOptionsAndValues, selectedConfig);
-
-                selectedConfig.WriteConfig(optionsAndValues).Wait();
-                return 0;
+                ManageConfig(commands);
             }
 
             if (IsAskingHelp(commands[0]))
@@ -81,6 +41,82 @@ namespace environmator_cli
 
             return 0;
         }
+
+        private static int ManageNewProject(string[] commands)
+        {
+            if (commands.Length <= 1 || IsAskingHelp(commands[1]))
+            {
+                Console.WriteLine($"new-project options:");
+                Console.WriteLine($"   -n --name        Your project name.");
+                return 0;
+            }
+
+            if (!(commands[1] == "-n" || commands[1] == "--name"))
+            {
+                Console.WriteLine("Specify your project name option");
+                return -1;
+            }
+
+            if (commands.Length <= 2)
+            {
+                Console.WriteLine("Specify your project name option");
+                return -1;
+            }
+
+            foreach (var command in _commands)
+            {
+                var options = command.ReadConfig().Result;
+                command.CreateEnvironment(commands[2], options);
+            }
+
+            return 0;
+        }
+
+        private static int ManageConfig(string[] commands)
+        {
+            if (commands.Length <= 1 || IsAskingHelp(commands[1]))
+            {
+                ShowConfigCommands();
+                return 0;
+            }
+
+            var selectedConfig = _commands.FirstOrDefault(c => c.Verb == commands[1]);
+
+            if (selectedConfig == null)
+            {
+                Console.WriteLine($"Config `{commands[1]}` not found... =/ Here are the configs you have:");
+                ShowConfigCommands();
+                return 0;
+            }
+
+            if (commands.Length <= 2 || IsAskingHelp(commands[2]))
+            {
+                ShowConfigOptions(selectedConfig);
+                return 0;
+            }
+
+            Dictionary<string, string> rawOptionsAndValues = GetOptionsAndItsValues(commands);
+
+            List<string> requiredOptionsNotFilled = RequiredOptionsNotFilled(rawOptionsAndValues, selectedConfig);
+
+            if (requiredOptionsNotFilled.Any())
+            {
+                Console.Write("Required options: ");
+                foreach (var requiredOptionNotFilled in requiredOptionsNotFilled)
+                    Console.Write($"{requiredOptionNotFilled},");
+                Console.WriteLine(" not filled");
+
+                return -1;
+            }
+
+            var optionsAndValues = TransformRawOptionsToObject(rawOptionsAndValues, selectedConfig);
+
+            selectedConfig.WriteConfig(optionsAndValues).Wait();
+            return 0;
+        }
+
+
+
 
         private static Dictionary<Option, string> TransformRawOptionsToObject(Dictionary<string, string> rawOptionsAndValues, Command selectedConfig)
         {
@@ -132,6 +168,8 @@ namespace environmator_cli
 
             return optionsAndVaues;
         }
+
+
 
         private static void InitializeCommands()
         {

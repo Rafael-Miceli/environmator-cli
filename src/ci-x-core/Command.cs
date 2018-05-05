@@ -24,7 +24,7 @@ namespace ci_x_core
         public abstract Option[] Options { get; }
         public abstract string Help { get; }
 
-        public abstract void CreateEnvironment();
+        public abstract void CreateEnvironment(string projectName, Option[] optionsWithValues);
 
         public async Task WriteConfig(Dictionary<Option, string> optionsAndValues)
         {            
@@ -61,26 +61,28 @@ namespace ci_x_core
                 
             ClearFileContent(envyxConfigFile);
                 
-            File.AppendAllLines(envyxConfigFile, lines);
-            
+            File.AppendAllLines(envyxConfigFile, lines);            
         }
 
-        //public async Task<ConfigVerb> ReadPluginConfig()
-        //{
-        //    var pluginConfigAsString = File.ReadAllLines(envyxConfigFile);
+        public async Task<Option[]> ReadConfig()
+        {
+            var pluginConfigAsString = File.ReadAllLines(envyxConfigFile);
 
-        //    var pluginConfigAsStringArray = pluginConfigAsString
-        //     .Where(l => !string.IsNullOrEmpty(l))
-        //     .SkipWhile(line => !line.Contains($"[{_pluginTag}]"))
-        //     .Skip(1)
-        //     .TakeWhile(line => !line.Contains("["));
+            var pluginConfigAsStringArray = pluginConfigAsString
+             .Where(l => !string.IsNullOrEmpty(l))
+             .SkipWhile(line => !line.Contains($"[{Verb}]"))
+             .Skip(1)
+             .TakeWhile(line => !line.Contains("["));
 
-        //    var pluginConfigSplited = pluginConfigAsStringArray.Select(c => c.Split('='));
+            var pluginConfigSplited = pluginConfigAsStringArray.Select(c => new KeyValuePair<string, string>(c.Split('=')[0], c.Split('=')[1]));
 
-        //    var config = await ReadDefinedConfigSections(pluginConfigSplited);
+            var newOptions = new List<Option>();
 
-        //    return config;
-        //}
+            foreach (var option in Options)
+                newOptions.Add(option.SetValue(pluginConfigSplited.FirstOrDefault(c => c.Key == option.Name).Value));
+
+            return newOptions.ToArray();
+        }
 
         private bool ConfigDoesNotExist(string envyxConfigFile)
         {
