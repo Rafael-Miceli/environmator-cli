@@ -71,6 +71,7 @@ namespace environmator_cli
                 {
                     var options = command.ReadConfig().Result;
                     command.CreateEnvironment(commands[2], options);
+                    Console.WriteLine($"Environment in {command.Verb} created!");
                 }
                 catch (Exception ex)
                 {
@@ -79,6 +80,8 @@ namespace environmator_cli
                 }
                 
             }
+
+            Console.WriteLine($"Project created in all environments.");
 
             return 0;
         }

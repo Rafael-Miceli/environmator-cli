@@ -1,6 +1,5 @@
 using System;
 using Xunit;
-using environmator_cli.Configuration;
 using environmator_cli;
 
 namespace environmator.tests
