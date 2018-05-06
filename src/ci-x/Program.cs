@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using ci_x_core;
 using System.Linq;
 using vsts_plugin;
+using System.Reflection;
+using System.IO;
 
 namespace environmator_cli
 {
     public class Program
     {
-        private static IEnumerable<Command> _commands;
+        private static List<Command> _commands = new List<Command>();
 
         static int Main(string[] args)
         {
@@ -183,15 +185,8 @@ namespace environmator_cli
             return optionsAndVaues;
         }
 
+        
 
-
-        private static void InitializeCommands()
-        {
-            _commands = new List<Command>
-            {
-                new Vsts()
-            };
-        }
 
         private static bool IsAskingHelp(string command)
         {
@@ -228,6 +223,32 @@ namespace environmator_cli
 
                 Console.WriteLine($"    {option.Help}");
             }
+        }
+
+
+        private static void InitializeCommands()
+        {
+            Type baseType = typeof(Command);
+
+            //var assembly = Assembly.GetExecutingAssembly();
+            string path = Directory.GetCurrentDirectory();
+            string target = @"C:\Users\Rafael\Documents\Pessoal\PriceStores\environmator-cli\src\ci-x\bin\Debug\netcoreapp2.0\vsts-plugin.dll";
+            Assembly assembly = Assembly.LoadFrom(target);
+
+            var types = assembly.GetTypes()
+                .Where(baseType.IsAssignableFrom)
+                .Where(t => baseType != t);
+
+            foreach (var @type in types)
+            {
+                var instance = Activator.CreateInstance(@type) as Command;
+                _commands.Add(instance);
+            }
+
+            //_commands = new List<Command>
+            //{
+            //    new Vsts()
+            //};
         }
     }
 }
