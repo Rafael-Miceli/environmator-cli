@@ -228,15 +228,13 @@ namespace environmator_cli
 
         private static void InitializeCommands()
         {
-            Type baseType = typeof(Command);
-            
-            string path = Directory.GetCurrentDirectory();
+            var plugins = GetPluginsToLoad();
 
-            List<string> plugins = GetPluginsToLoad();
+            Type baseType = typeof(Command);
 
             foreach (var plugin in plugins)
             {
-                string target = plugin; //
+                string target = plugin; 
                 Assembly assembly = Assembly.LoadFrom(target);
 
                 var @type = assembly.GetTypes()
@@ -248,9 +246,23 @@ namespace environmator_cli
             }            
         }
 
-        private static List<string> GetPluginsToLoad()
+        private static IEnumerable<string >GetPluginsToLoad()
         {
-            return new List<string> { @"C:\Users\Rafael\Documents\Pessoal\PriceStores\environmator-cli\src\ci-x\bin\Debug\netcoreapp2.0\vsts-plugin.dll" };        
+            var AppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var envyxDir = Path.Combine(AppDataPath, "ci-x");
+            Directory.CreateDirectory(envyxDir);
+
+            var envyxConfigFile = Path.Combine(envyxDir, "config.");
+
+            var pluginInConfig = File.ReadAllLines(envyxConfigFile);
+
+            var plugins = pluginInConfig
+             .Where(l => !string.IsNullOrEmpty(l))
+             .SkipWhile(line => !line.Contains($"[plugins]"))
+             .Skip(1)
+             .TakeWhile(line => !line.Contains("["));
+
+            return plugins;
         }
     }
 }
