@@ -25,6 +25,18 @@ namespace environmator_cli
 
             var commands = args.Select(c => c.ToLower()).ToArray();
 
+            if (IsAskingHelp(commands[0]))
+            {
+                ShowCommands();
+                return 0;
+            }
+
+            if (!_commands.Any())
+            {
+                Console.WriteLine("You don't have any plugin configured. Please add plugins in your ci-x config file!");
+                return -1;
+            }
+            
             if (commands[0] == "new-project")
             {
                 ManageNewProject(commands);
@@ -35,11 +47,7 @@ namespace environmator_cli
                 ManageConfig(commands);
             }
 
-            if (IsAskingHelp(commands[0]))
-            {
-                ShowCommands();
-                return 0;
-            }
+            
 
             return 0;
         }
@@ -203,8 +211,9 @@ namespace environmator_cli
 
         private static void ShowConfigCommands()
         {
-            Console.WriteLine("");
-            Console.WriteLine("configs:");
+            Console.WriteLine("");          
+            
+            Console.WriteLine("configs:");            
             foreach (var command in _commands)
             {
                 Console.WriteLine($"   {command.Verb}   {command.Help}.");
