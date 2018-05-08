@@ -39,17 +39,15 @@ namespace environmator_cli
             
             if (commands[0] == "new-project")
             {
-                ManageNewProject(commands);
+                return ManageNewProject(commands);
             }
 
             if (commands[0] == "config")
             {
-                ManageConfig(commands);
-            }
+                return ManageConfig(commands);
+            }            
 
-            
-
-            return 0;
+            return -1;
         }
 
         private static int ManageNewProject(string[] commands)
