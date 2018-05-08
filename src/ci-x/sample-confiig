@@ -1,3 +1,6 @@
+[plugins]
+path1\plugin1.dll
+path2\plugin2.dll
 [jenkins]
 host=test
 [vsts]
