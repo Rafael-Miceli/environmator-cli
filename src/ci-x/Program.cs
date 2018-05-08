@@ -229,26 +229,28 @@ namespace environmator_cli
         private static void InitializeCommands()
         {
             Type baseType = typeof(Command);
-
-            //var assembly = Assembly.GetExecutingAssembly();
+            
             string path = Directory.GetCurrentDirectory();
-            string target = @"C:\Users\Rafael\Documents\Pessoal\PriceStores\environmator-cli\src\ci-x\bin\Debug\netcoreapp2.0\vsts-plugin.dll";
-            Assembly assembly = Assembly.LoadFrom(target);
 
-            var types = assembly.GetTypes()
-                .Where(baseType.IsAssignableFrom)
-                .Where(t => baseType != t);
+            List<string> plugins = GetPluginsToLoad();
 
-            foreach (var @type in types)
+            foreach (var plugin in plugins)
             {
+                string target = plugin; //
+                Assembly assembly = Assembly.LoadFrom(target);
+
+                var @type = assembly.GetTypes()
+                    .Where(baseType.IsAssignableFrom)
+                    .FirstOrDefault(t => baseType != t);
+
                 var instance = Activator.CreateInstance(@type) as Command;
                 _commands.Add(instance);
-            }
+            }            
+        }
 
-            //_commands = new List<Command>
-            //{
-            //    new Vsts()
-            //};
+        private static List<string> GetPluginsToLoad()
+        {
+            return new List<string> { @"C:\Users\Rafael\Documents\Pessoal\PriceStores\environmator-cli\src\ci-x\bin\Debug\netcoreapp2.0\vsts-plugin.dll" };        
         }
     }
 }
