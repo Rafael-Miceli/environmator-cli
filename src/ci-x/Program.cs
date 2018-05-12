@@ -261,6 +261,10 @@ namespace environmator_cli
 
             var envyxConfigFile = Path.Combine(envyxDir, "config.");
 
+            if (!File.Exists(envyxConfigFile)) {
+                File.AppendAllText(envyxConfigFile, "[plugins]");
+            }
+
             var pluginInConfig = File.ReadAllLines(envyxConfigFile);
 
             var plugins = pluginInConfig
